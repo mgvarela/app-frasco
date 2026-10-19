@@ -1,0 +1,19 @@
+{
+  "name": "Frasco — vidrio que vuelve a circular",
+  "short_name": "Frasco",
+  "description": "Marketplace de frascos y botellas de vidrio reutilizables.",
+  "lang": "es-AR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F7F5EF",
+  "theme_color": "#173D32",
+  "icons": [
+    {
+      "src": "./icons/frasco.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

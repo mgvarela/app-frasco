@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173D32">
+  <meta name="description" content="Encontrá y publicá frascos y botellas de vidrio reutilizables en Frasco.">
+  <title>Frasco — vidrio que vuelve a circular</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/frasco.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <div class="topbar">El vidrio tiene más de una vida. Encontrá la próxima en Frasco.</div>
+  <header class="wrap nav">
+    <a class="brand" href="./" aria-label="Frasco, inicio"><span class="logo" aria-hidden="true">↻</span> frasco.</a>
+    <nav class="navlinks" aria-label="Navegación principal">
+      <a href="#catalogo">Explorar</a>
+      <a href="#como-funciona">Cómo funciona</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="btn secondary" id="account-link" type="button" hidden>Mi cuenta</button>
+      <button class="btn secondary" id="sign-in-open" type="button">Ingresar</button>
+      <button class="btn" data-open-listing type="button">＋ Publicar gratis</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="wrap hero">
+      <div>
+        <div class="eyebrow"><span class="dot"></span> El vidrio vuelve a circular</div>
+        <h1>Lo que guardás,<br>alguien lo <span>necesita.</span></h1>
+        <p>Encontrá frascos y botellas de vidrio reutilizables para tus proyectos. O convertí esos envases que tenés acumulados en una oportunidad.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#catalogo">Explorar publicaciones <span aria-hidden="true">↗</span></a>
+          <button class="btn secondary" data-open-listing type="button">Quiero vender</button>
+        </div>
+        <div class="proof">Un marketplace especializado que conecta personas. El retiro y la entrega se coordinan directamente.</div>
+      </div>
+      <div class="visual" role="img" aria-label="Ilustración de frascos reutilizables">
+        <div class="sun"></div><div class="plant" aria-hidden="true">♧</div>
+        <div class="jar-scene" aria-hidden="true">
+          <div class="jar small"><span class="labeljar">REUSAR</span></div>
+          <div class="jar"><span class="labeljar">OTRA VIDA</span></div>
+          <div class="jar tall"><span class="labeljar">FRASCO</span></div>
+        </div>
+        <div class="float-card fc1"><strong>Menos desperdicio</strong><span>Más oportunidades para el vidrio</span></div>
+        <div class="float-card fc2"><strong>📍 Cerca tuyo</strong><span>Coordiná directo con quien vende</span></div>
+      </div>
+    </section>
+
+    <section class="section white" id="catalogo">
+      <div class="wrap">
+        <div class="section-head">
+          <div><div class="eyebrow">El catálogo</div><h2>Encontrá tu próximo frasco.</h2><p class="sub">Publicaciones reales de envases reutilizables, ordenadas para ayudarte a comparar.</p></div>
+        </div>
+        <div class="setup-banner" id="setup-banner" role="status" hidden>
+          <strong>Falta conectar Supabase.</strong>
+          <span>Configurá el proyecto y ejecutá <code>supabase/schema.sql</code> siguiendo la guía de instalación para habilitar el catálogo y las cuentas.</span>
+        </div>
+        <div class="status" id="app-status" role="status" aria-live="polite" hidden></div>
+        <form class="filterbar" id="filters">
+          <label class="sr-only" for="search">Buscar por palabra</label>
+          <input id="search" name="q" type="search" placeholder="Buscar frascos, botellas…" maxlength="80">
+          <label class="sr-only" for="category">Categoría</label>
+          <select id="category" name="category">
+            <option value="">Todas las categorías</option>
+            <option value="jars">Frascos con tapa</option>
+            <option value="bottles">Botellas</option>
+            <option value="bulk">Lotes para emprendimientos</option>
+            <option value="other">Otros envases de vidrio</option>
+          </select>
+          <label class="sr-only" for="price-min">Precio mínimo en pesos</label>
+          <input id="price-min" name="price_min" type="number" min="0" placeholder="Precio desde">
+          <label class="sr-only" for="price-max">Precio máximo en pesos</label>
+          <input id="price-max" name="price_max" type="number" min="0" placeholder="Precio hasta">
+          <label class="sr-only" for="quantity-min">Cantidad mínima</label>
+          <input id="quantity-min" name="quantity_min" type="number" min="1" placeholder="Unidades desde">
+          <label class="sr-only" for="location">Zona</label>
+          <input id="location" name="location" type="search" maxlength="60" placeholder="Zona (ej. CABA)">
+          <label class="sr-only" for="sort">Ordenar por</label>
+          <select id="sort" name="sort">
+            <option value="recent">Más recientes</option>
+            <option value="price_asc">Menor precio</option>
+            <option value="price_desc">Mayor precio</option>
+          </select>
+          <button class="btn secondary" type="submit">Buscar</button>
+        </form>
+        <div class="products" id="listing-grid" aria-live="polite"></div>
+        <div class="empty-state" id="empty-state" hidden>
+          <strong id="empty-title">Todavía no hay publicaciones para mostrar.</strong>
+          <p id="empty-copy">Cuando haya anuncios activos, los vas a encontrar acá.</p>
+          <button class="btn" data-open-listing type="button">Publicar el primero</button>
+        </div>
+        <div class="pagination">
+          <button class="btn secondary" id="previous-page" type="button" disabled>Anterior</button>
+          <span id="page-label">Página 1</span>
+          <button class="btn secondary" id="next-page" type="button" disabled>Siguiente</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="vender">
+      <div class="wrap">
+        <div class="sellband">
+          <div><div class="eyebrow light">¿Tenés envases acumulados?</div><h2>Que no junten polvo.<br>Que vuelvan a circular.</h2><p>Publicá gratis, compartí fotos e información útil y coordiná el retiro directamente con quien compra.</p></div>
+          <button class="btn lime" data-open-listing type="button">Publicar mis frascos <span aria-hidden="true">↗</span></button>
+        </div>
+        <div id="como-funciona" class="section-head section-title"><div><div class="eyebrow">Simple y directo</div><h2>Así funciona Frasco.</h2></div></div>
+        <div class="steps">
+          <article class="step"><div class="num">01 / PUBLICÁ</div><h3>Mostrá lo que tenés</h3><p>Agregá fotos, cantidad, medidas, estado y precio. Crear una publicación es gratis.</p></article>
+          <article class="step"><div class="num">02 / CONECTÁ</div><h3>Encontrá a la otra parte</h3><p>Quien busca envases puede comparar anuncios y consultar por WhatsApp si el vendedor autorizó mostrar su número.</p></article>
+          <article class="step"><div class="num">03 / COORDINÁ</div><h3>Dale otra vida al vidrio</h3><p>Comprador y vendedor arreglan el retiro o la entrega entre ellos. Frasco no almacena ni transporta productos.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section white account-section" id="my-account" hidden>
+      <div class="wrap">
+        <div class="section-head"><div><div class="eyebrow">Tu espacio</div><h2>Mi cuenta</h2></div><button class="btn secondary" id="sign-out" type="button">Cerrar sesión</button></div>
+        <div class="account-grid">
+          <section class="panel">
+            <h3>Perfil y contacto</h3>
+            <form id="profile-form">
+              <label class="field">Nombre visible<input name="display_name" type="text" maxlength="60" required autocomplete="name"></label>
+              <label class="field">WhatsApp con código de país<input name="whatsapp_number" type="tel" inputmode="numeric" placeholder="54911XXXXXXXX" maxlength="15" required autocomplete="tel"></label>
+              <label class="checkbox"><input name="contact_public" type="checkbox"> Mostrar mi nombre y WhatsApp en mis publicaciones activas</label>
+              <p class="hint">Tu número solo se muestra en anuncios activos si marcás esta opción. Usá el formato internacional, solo dígitos (por ejemplo, 54911XXXXXXXX).</p>
+              <button class="btn" type="submit">Guardar perfil</button>
+            </form>
+          </section>
+          <section class="panel">
+            <h3>Mis publicaciones</h3>
+            <div id="my-listings" class="my-listings"></div>
+          </section>
+          <section class="panel">
+            <h3>Favoritos</h3>
+            <div id="my-favorites" class="my-listings"></div>
+          </section>
+          <section class="panel" id="moderation-panel" hidden>
+            <h3>Moderación</h3>
+            <div id="reports-list" class="my-listings"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer"><div class="wrap footerrow"><div><a class="brand brand-light" href="./"><span class="logo" aria-hidden="true">↻</span> frasco.</a><p>El vidrio tiene más de una vida.</p></div><div><strong>Conexión directa, acuerdos entre las partes</strong><p>Revisá cada envase y coordiná el retiro de manera segura.</p></div></div></footer>
+
+  <dialog class="dialog" id="auth-dialog" aria-labelledby="auth-heading">
+    <form method="dialog"><button class="close" aria-label="Cerrar">×</button></form>
+    <div class="eyebrow">Tu cuenta Frasco</div><h2 id="auth-heading">Ingresar</h2>
+    <div class="auth-tabs" id="auth-tabs"><button type="button" class="tab active" data-auth-mode="signin">Ingresar</button><button type="button" class="tab" data-auth-mode="signup">Crear cuenta</button></div>
+    <form id="auth-form">
+      <label class="field">Correo electrónico<input name="email" type="email" autocomplete="email" maxlength="254" required></label>
+      <label class="field" id="password-field">Contraseña<input name="password" type="password" autocomplete="current-password" minlength="8" required></label>
+      <label class="field signup-field" hidden>Nombre visible<input name="display_name" type="text" maxlength="60" autocomplete="name"></label>
+      <label class="field signup-field" hidden>WhatsApp (opcional, solo dígitos internacionales)<input name="whatsapp_number" type="tel" inputmode="numeric" maxlength="15" placeholder="54911XXXXXXXX" autocomplete="tel"></label>
+      <button class="btn full" id="auth-submit" type="submit">Ingresar</button>
+      <button class="text-button" id="forgot-password" type="button">Olvidé mi contraseña</button>
+    </form>
+    <p class="hint" id="auth-message" role="status" aria-live="polite"></p>
+  </dialog>
+
+  <dialog class="dialog wide" id="listing-dialog" aria-labelledby="listing-heading">
+    <form method="dialog"><button class="close" aria-label="Cerrar">×</button></form>
+    <div class="eyebrow">Publicación</div><h2 id="listing-heading">Mostrá tus envases</h2>
+    <form id="listing-form">
+      <input name="id" type="hidden">
+      <div class="form-grid">
+        <label class="field">Título<input name="title" type="text" maxlength="90" required placeholder="Ej. Frascos de 250 ml con tapa"></label>
+        <label class="field">Categoría<select name="category" required><option value="jars">Frascos con tapa</option><option value="bottles">Botellas</option><option value="bulk">Lotes para emprendimientos</option><option value="other">Otros envases de vidrio</option></select></label>
+        <label class="field full-field">Descripción<textarea name="description" maxlength="1200" rows="4" required placeholder="Indicá estado, uso anterior y detalles importantes."></textarea></label>
+        <label class="field">Precio en pesos argentinos<input name="price_ars" type="number" min="0" max="100000000" step="1" required></label>
+        <label class="field">Precio por<select name="price_unit"><option value="lot">Lote</option><option value="unit">Unidad</option></select></label>
+        <label class="field">Cantidad disponible<input name="quantity" type="number" min="1" max="1000000" step="1" required></label>
+        <label class="field">Capacidad (ml, opcional)<input name="capacity_ml" type="number" min="1" max="1000000" step="1"></label>
+        <label class="field">Dimensiones (opcional)<input name="dimensions" type="text" maxlength="80" placeholder="Ej. 8 × 12 cm"></label>
+        <label class="field">Estado del vidrio<select name="glass_condition"><option value="excellent">Excelente</option><option value="good">Bueno</option><option value="fair">Con marcas de uso</option></select></label>
+        <label class="field">Estado de las tapas<select name="lid_condition"><option value="included">Incluidas y en buen estado</option><option value="not_included">No incluidas</option><option value="not_applicable">No aplica</option><option value="unknown">No especificado</option></select></label>
+        <label class="field">Zona aproximada<input name="location_label" type="text" maxlength="80" required placeholder="Ej. Villa Devoto, CABA"></label>
+        <label class="field">Fotos (máximo 5)<input name="images" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
+      </div>
+      <p class="hint">No incluyas direcciones exactas, datos personales ni imágenes de terceros. Máximo 5 imágenes de hasta 5 MB cada una.</p>
+      <div class="dialog-actions"><button class="btn secondary" type="button" data-close-dialog>Cancelar</button><button class="btn" type="submit">Guardar publicación</button></div>
+      <p class="hint" id="listing-message" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <dialog class="dialog" id="detail-dialog" aria-labelledby="detail-title">
+    <form method="dialog"><button class="close" aria-label="Cerrar">×</button></form>
+    <div id="detail-content"></div>
+  </dialog>
+
+  <dialog class="dialog" id="report-dialog" aria-labelledby="report-heading">
+    <form method="dialog"><button class="close" aria-label="Cerrar">×</button></form>
+    <div class="eyebrow">Ayudanos a cuidar Frasco</div><h2 id="report-heading">Reportar publicación</h2>
+    <form id="report-form">
+      <input name="listing_id" type="hidden">
+      <label class="field">Motivo<select name="reason" required><option value="misleading">Información engañosa</option><option value="prohibited">Producto no permitido</option><option value="spam">Spam o publicación repetida</option><option value="safety">Riesgo de seguridad</option><option value="other">Otro motivo</option></select></label>
+      <label class="field">Detalle (opcional)<textarea name="details" maxlength="500" rows="3"></textarea></label>
+      <button class="btn full" type="submit">Enviar reporte</button>
+      <p class="hint" id="report-message" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>

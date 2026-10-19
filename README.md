@@ -89,6 +89,7 @@ El cambio de rol no está disponible desde el navegador. No asignes `admin` o `m
 - Favoritos, detalle de anuncio, contacto por WhatsApp con texto inicial y reportes de contenido.
 - Panel de revisión de reportes para roles `moderator`/`admin`.
 - Manifest, icono y caché offline del shell de la aplicación. La caché no guarda el catálogo, imágenes ni datos de sesión para uso sin conexión.
+- La configuración `supabase-config.js` no se almacena en la caché offline: cada carga solicita la versión actual al servidor para evitar quedarse con credenciales de una instalación anterior.
 
 ## Verificación manual antes de lanzar
 
@@ -105,5 +106,5 @@ El cambio de rol no está disponible desde el navegador. No asignes `admin` o `m
 
 - Esta versión no incorpora pagos, logística, chat interno, moderación automática, analítica/GA4, métricas de ventas, panel de operaciones ni administración de roles desde la web.
 - Las fotos se sirven mediante URLs firmadas de corta duración sujetas a las políticas de Storage. La eliminación de un anuncio borra los metadatos de sus imágenes; el navegador intenta borrar también los objetos. Si falla la limpieza de Storage, el anuncio ya eliminado puede dejar objetos huérfanos que una persona administradora tendrá que retirar.
-- El service worker usa caché-first para los archivos estáticos. Al actualizar la app, incrementá `CACHE_NAME` en `sw.js` para que las instalaciones existentes descarguen la versión nueva.
+- El service worker usa caché-first para los archivos estáticos. Al actualizar la app, incrementá `CACHE_NAME` en `sw.js` para que las instalaciones existentes descarguen la versión nueva. Si una instalación previa sigue mostrando contenido antiguo, recargá la página; en un navegador que no actualice el service worker, borrá los datos del sitio y abrilo de nuevo.
 - La interfaz todavía necesita revisión de accesibilidad con lectores de pantalla y pruebas en dispositivos reales antes de un lanzamiento público.

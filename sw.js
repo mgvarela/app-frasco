@@ -1,10 +1,9 @@
-const CACHE_NAME = "frasco-shell-v1";
+const CACHE_NAME = "frasco-shell-v2";
 const SHELL_FILES = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
-  "./supabase-config.js",
   "./manifest.webmanifest",
   "./icons/frasco.svg"
 ];
@@ -28,6 +27,13 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
   const { request } = event;
   if (request.method !== "GET" || new URL(request.url).origin !== self.location.origin) return;
+  const requestUrl = new URL(request.url);
+
+  // Configuration can change between deploys; never serve an old cached key or URL.
+  if (requestUrl.pathname.endsWith("/supabase-config.js")) {
+    event.respondWith(fetch(request));
+    return;
+  }
 
   if (request.mode === "navigate") {
     event.respondWith(
